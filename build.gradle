@@ -1,0 +1,62 @@
+//file:noinspection GroovyUnusedAssignment
+plugins {
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id 'io.ktor.plugin' version '2.1.2'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.7.20'
+    id 'org.jlleitschuh.gradle.ktlint' version '11.0.0'
+}
+
+group "me.kofesst.ktor.mptinformant"
+version "1.0"
+
+def applicationClassName = "me.kofesst.ktor.mptinformant.ApplicationKt"
+mainClassName = applicationClassName
+
+def isDevelopment = project.ext.has("development")
+applicationDefaultJvmArgs = ["-Dio.ktor.development=$isDevelopment"]
+
+repositories {
+    mavenCentral()
+}
+
+ktlint {
+    android = false
+    debug = true
+    verbose = true
+    ignoreFailures = false
+    disabledRules = ['no-wildcard-imports']
+    reporters {
+        reporter 'plain'
+        reporter 'checkstyle'
+        reporter 'sarif'
+    }
+}
+
+dependencies {
+    implementation "org.jsoup:jsoup:$jsoup_version"
+
+    implementation "io.insert-koin:koin-ktor:$koin_version"
+    implementation "io.insert-koin:koin-logger-slf4j:$koin_version"
+    implementation 'org.slf4j:slf4j-simple:2.0.3'
+
+    implementation "io.ktor:ktor-server-locations:$ktor_version"
+    implementation "io.ktor:ktor-server-core-jvm:$ktor_version"
+    implementation "io.ktor:ktor-server-content-negotiation-jvm:$ktor_version"
+    implementation "io.ktor:ktor-serialization-kotlinx-json-jvm:$ktor_version"
+    implementation "io.ktor:ktor-server-netty-jvm:$ktor_version"
+    implementation 'io.ktor:ktor-server-locations-jvm:2.1.2'
+
+    testImplementation "io.ktor:ktor-server-tests-jvm:$ktor_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+}
+
+application {
+    mainClass.set(applicationClassName)
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("mpt-informant-server.jar")
+    }
+}
