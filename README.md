@@ -157,6 +157,7 @@ Group not found
 **Пример ответа**
 ```json
 {
+    "week_label": "Знаменатель",
     "group_id": "c0c0f0c0e9bfd5e3521de71ef4a36e74",
     "days": [
         {
@@ -212,6 +213,7 @@ Schedule not found
 **Пример ответа**
 ```json
 {
+    "week_label": "Знаменатель",
     "group_id": "c0c0f0c0e9bfd5e3521de71ef4a36e74",
     "days": [
         {

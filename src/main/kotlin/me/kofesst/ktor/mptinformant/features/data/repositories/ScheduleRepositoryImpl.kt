@@ -34,6 +34,7 @@ class ScheduleRepositoryImpl(
         val scheduleDays = tableElements.map(this@ScheduleRepositoryImpl::parseScheduleDay)
 
         GroupSchedule(
+            weekLabel = getWeekLabel() ?: WeekLabel.None,
             groupId = groupId,
             days = scheduleDays
         )
