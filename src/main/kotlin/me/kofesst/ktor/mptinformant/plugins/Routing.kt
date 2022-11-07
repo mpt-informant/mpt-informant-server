@@ -3,10 +3,7 @@ package me.kofesst.ktor.mptinformant.plugins
 import io.ktor.server.application.*
 import io.ktor.server.locations.*
 import io.ktor.server.routing.*
-import me.kofesst.ktor.mptinformant.features.domain.endpoints.changesEndpoints
-import me.kofesst.ktor.mptinformant.features.domain.endpoints.departmentEndpoints
-import me.kofesst.ktor.mptinformant.features.domain.endpoints.groupEndpoints
-import me.kofesst.ktor.mptinformant.features.domain.endpoints.scheduleEndpoints
+import me.kofesst.ktor.mptinformant.features.domain.endpoints.*
 
 @Suppress("UnnecessaryOptInAnnotation")
 @OptIn(KtorExperimentalLocationsAPI::class)
@@ -17,5 +14,6 @@ fun Application.configureRouting() {
         groupEndpoints()
         scheduleEndpoints()
         changesEndpoints()
+        timeTableEndpoints()
     }
 }
