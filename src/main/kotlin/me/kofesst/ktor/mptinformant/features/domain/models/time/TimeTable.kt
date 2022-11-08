@@ -37,8 +37,13 @@ data class TimeTable(
                 ),
                 TimeTableRow(
                     lessonNumber = 6,
-                    startTime = LocalTime.of(8, 30),
-                    endTime = LocalTime.of(10, 0)
+                    startTime = LocalTime.of(17, 15),
+                    endTime = LocalTime.of(18, 45)
+                ),
+                TimeTableRow(
+                    lessonNumber = 7,
+                    startTime = LocalTime.of(18, 50),
+                    endTime = LocalTime.of(20, 20)
                 ),
             )
         )
