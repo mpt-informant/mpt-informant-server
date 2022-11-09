@@ -15,5 +15,6 @@ fun Application.configureRouting() {
         scheduleEndpoints()
         changesEndpoints()
         timeTableEndpoints()
+        weekLabelEndpoints()
     }
 }
