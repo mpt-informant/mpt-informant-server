@@ -10,6 +10,8 @@
     - [Расписание группы](#расписание-группы)
     - [Расписание группы с заменами](#расписание-группы-с-заменами)
 - [Замены в расписании](#замены-в-расписании)
+- [Тип недели](#тип-недели)
+- [Расписание звонков](#расписание-звонков)
 
 ## Отделения
 
@@ -296,7 +298,7 @@ Schedule not found
 
 ## Замены в расписании
 
-`curl -X GET /api/changes/byId/{group_id}` - получение замен в расписании по id или названию
+`curl -X GET /api/changes/{group_id_or_name}` - получение замен в расписании по id или названию
 группы.
 
 **Пример ответа**
@@ -353,4 +355,63 @@ Schedule not found
 ```
 Status code: 400 (BAD REQUEST)
 Changes not found
+```
+
+## Тип недели
+
+`curl -X GET /api/week-label` - получение текущего типа недели.
+
+**Пример ответа**
+
+```json
+{
+  "name": "Numerator",
+  "display_name": "Числитель"
+}
+```
+
+## Расписание звонков
+
+`curl -X GET /api/timetable` - получение расписания звонков.
+
+**Пример ответа**
+
+```json
+{
+  "rows": [
+    {
+      "lesson_number": 1,
+      "start_time": {
+        "hour": 8,
+        "minute": 30
+      },
+      "end_time": {
+        "hour": 10,
+        "minute": 0
+      }
+    },
+    {
+      "lesson_number": 2,
+      "start_time": {
+        "hour": 10,
+        "minute": 10
+      },
+      "end_time": {
+        "hour": 11,
+        "minute": 40
+      }
+    },
+    {
+      "lesson_number": 3,
+      "start_time": {
+        "hour": 12,
+        "minute": 0
+      },
+      "end_time": {
+        "hour": 13,
+        "minute": 30
+      }
+    }
+  ]
+}
 ```
