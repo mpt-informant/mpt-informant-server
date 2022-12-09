@@ -18,7 +18,8 @@ data class ScheduleEndpoint(val group: String)
 fun Route.scheduleEndpoints() {
     val scheduleRepository by inject<ScheduleRepository>()
     get<ScheduleEndpoint> { endpoint ->
-        val schedule = scheduleRepository.getGroupSchedule(endpoint.group)
+        val useMergingWithChanges = call.parameters["merge"]?.toBooleanStrictOrNull() ?: false
+        val schedule = scheduleRepository.getGroupSchedule(endpoint.group, useMergingWithChanges)
         respondSchedule(schedule)
     }
 }

@@ -1,4 +1,4 @@
-package me.kofesst.ktor
+package me.kofesst.ktor.mptinformant
 
 import me.kofesst.ktor.mptinformant.features.data.utils.parse
 import me.kofesst.ktor.mptinformant.features.domain.models.changes.GroupChangesRow
