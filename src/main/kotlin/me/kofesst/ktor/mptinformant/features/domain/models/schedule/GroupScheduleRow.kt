@@ -3,6 +3,8 @@ package me.kofesst.ktor.mptinformant.features.domain.models.schedule
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import me.kofesst.ktor.mptinformant.features.domain.models.time.TimeTable
+import me.kofesst.ktor.mptinformant.features.domain.models.time.TimeTableRow
 
 @Serializable
 sealed class GroupScheduleRow {
@@ -19,7 +21,10 @@ sealed class GroupScheduleRow {
 
         @SerialName("teacher")
         val teacher: String,
-    ) : GroupScheduleRow()
+    ) : GroupScheduleRow() {
+        @SerialName("time_table")
+        val timeTableRow: TimeTableRow = TimeTable.default.of(lessonNumber)
+    }
 
     @Serializable
     @SerialName("divided")
@@ -33,6 +38,9 @@ sealed class GroupScheduleRow {
         @SerialName("denominator")
         val denominator: Label,
     ) : GroupScheduleRow() {
+        @SerialName("time_table")
+        val timeTableRow: TimeTableRow = TimeTable.default.of(lessonNumber)
+
         @Serializable
         @SerialName("label")
         data class Label(
