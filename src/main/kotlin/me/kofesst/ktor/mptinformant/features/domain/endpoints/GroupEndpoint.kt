@@ -10,33 +10,21 @@ import me.kofesst.ktor.mptinformant.features.domain.models.Group
 import me.kofesst.ktor.mptinformant.features.domain.repositories.GroupsRepository
 import org.koin.ktor.ext.inject
 
-@Suppress("unused") // Nested location class with outer location class parameter
 @OptIn(KtorExperimentalLocationsAPI::class)
 @Location("api/groups")
-class GroupEndpoint {
-    @Location("/all")
-    class All(val parent: GroupEndpoint)
-
-    @Location("/byId/{id}")
-    data class ById(val parent: GroupEndpoint, val id: String)
-
-    @Location("/byName/{name}")
-    data class ByName(val parent: GroupEndpoint, val name: String)
-}
+class GroupEndpoint
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 fun Route.groupEndpoints() {
     val groupsRepository by inject<GroupsRepository>()
-    get<GroupEndpoint.All> {
-        call.respond(groupsRepository.getGroups())
-    }
-    get<GroupEndpoint.ById> { endpoint ->
-        val group = groupsRepository.getGroupById(endpoint.id)
-        respondGroup(group)
-    }
-    get<GroupEndpoint.ByName> { endpoint ->
-        val group = groupsRepository.getGroupByName(endpoint.name)
-        respondGroup(group)
+    get<GroupEndpoint> {
+        when (val groupParam = call.parameters["group"]) {
+            null -> call.respond(groupsRepository.getGroups())
+            else -> {
+                val department = groupsRepository.getGroup(groupParam)
+                respondGroup(department)
+            }
+        }
     }
 }
 

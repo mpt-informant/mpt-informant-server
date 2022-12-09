@@ -15,10 +15,10 @@ class ChangesRepositoryImpl(
         private const val ROOT_URL = "https://mpt.ru/studentu/izmeneniya-v-raspisanii/"
     }
 
-    override suspend fun getChangesByGroupId(groupId: String): GroupChanges? = parseDocument(
+    override suspend fun getGroupChanges(groupIdOrName: String): GroupChanges? = parseDocument(
         url = ROOT_URL,
     ) {
-        val group = groupsRepository.getGroupById(groupId)
+        val group = groupsRepository.getGroup(groupIdOrName)
             ?: throw Exception("Group not found")
         val groupName = group.name
 
@@ -47,14 +47,9 @@ class ChangesRepositoryImpl(
         }
 
         GroupChanges(
-            groupId = groupId,
+            groupId = groupIdOrName,
             days = changesDays
         )
-    }
-
-    override suspend fun getChangesByGroupName(groupName: String): GroupChanges? {
-        val group = groupsRepository.getGroupByName(groupName) ?: return null
-        return getChangesByGroupId(group.id)
     }
 
     private fun parseChangesRow(tableRowElement: Element): GroupChangesRow {

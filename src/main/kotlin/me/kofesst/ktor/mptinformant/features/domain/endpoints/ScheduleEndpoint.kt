@@ -10,26 +10,15 @@ import me.kofesst.ktor.mptinformant.features.domain.models.schedule.GroupSchedul
 import me.kofesst.ktor.mptinformant.features.domain.repositories.ScheduleRepository
 import org.koin.ktor.ext.inject
 
-@Suppress("unused") // Nested location class with outer location class parameter
 @OptIn(KtorExperimentalLocationsAPI::class)
-@Location("api/schedule")
-class ScheduleEndpoint {
-    @Location("/byId/{groupId}")
-    data class ById(val parent: ScheduleEndpoint, val groupId: String)
-
-    @Location("/byName/{groupName}")
-    data class ByName(val parent: ScheduleEndpoint, val groupName: String)
-}
+@Location("api/schedule/{group}")
+data class ScheduleEndpoint(val group: String)
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 fun Route.scheduleEndpoints() {
     val scheduleRepository by inject<ScheduleRepository>()
-    get<ScheduleEndpoint.ById> { endpoint ->
-        val schedule = scheduleRepository.getScheduleByGroupId(endpoint.groupId)
-        respondSchedule(schedule)
-    }
-    get<ScheduleEndpoint.ByName> { endpoint ->
-        val schedule = scheduleRepository.getScheduleByGroupName(endpoint.groupName)
+    get<ScheduleEndpoint> { endpoint ->
+        val schedule = scheduleRepository.getGroupSchedule(endpoint.group)
         respondSchedule(schedule)
     }
 }

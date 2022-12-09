@@ -25,24 +25,21 @@ class ScheduleRepositoryImpl(
         WeekLabel.byDisplayName(weekLabelElement.text())
     }
 
-    override suspend fun getScheduleByGroupId(groupId: String): GroupSchedule? = parseDocument(
+    override suspend fun getGroupSchedule(groupIdOrName: String): GroupSchedule? = parseDocument(
         url = ROOT_URL
     ) {
-        val tabPanelElement = select("div.tab-pane#$groupId").first()
+        val group = groupsRepository.getGroup(groupIdOrName)
+            ?: throw Exception("Group not found")
+        val tabPanelElement = select("div.tab-pane#${group.id}").first()
             ?: throw Exception("Schedule tab panel not found")
         val tableElements = tabPanelElement.select("table.table")
         val scheduleDays = tableElements.map(this@ScheduleRepositoryImpl::parseScheduleDay)
 
         GroupSchedule(
             weekLabel = getWeekLabel() ?: WeekLabel.None,
-            groupId = groupId,
+            groupId = group.id,
             days = scheduleDays
         )
-    }
-
-    override suspend fun getScheduleByGroupName(groupName: String): GroupSchedule? {
-        val group = groupsRepository.getGroupByName(groupName) ?: return null
-        return getScheduleByGroupId(group.id)
     }
 
     private fun parseScheduleDay(tableElement: Element): GroupScheduleDay {

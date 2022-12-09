@@ -10,33 +10,21 @@ import me.kofesst.ktor.mptinformant.features.domain.models.Department
 import me.kofesst.ktor.mptinformant.features.domain.repositories.DepartmentsRepository
 import org.koin.ktor.ext.inject
 
-@Suppress("unused") // Nested location class with outer location class parameter
 @OptIn(KtorExperimentalLocationsAPI::class)
 @Location("api/departments")
-class DepartmentEndpoint {
-    @Location("/all")
-    class All(val parent: DepartmentEndpoint)
-
-    @Location("/byId/{id}")
-    data class ById(val parent: DepartmentEndpoint, val id: String)
-
-    @Location("/byName/{name}")
-    data class ByName(val parent: DepartmentEndpoint, val name: String)
-}
+class DepartmentEndpoint
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 fun Route.departmentEndpoints() {
     val departmentsRepository by inject<DepartmentsRepository>()
-    get<DepartmentEndpoint.All> {
-        call.respond(departmentsRepository.getDepartments())
-    }
-    get<DepartmentEndpoint.ById> { endpoint ->
-        val department = departmentsRepository.getDepartmentById(endpoint.id)
-        respondDepartment(department)
-    }
-    get<DepartmentEndpoint.ByName> { endpoint ->
-        val department = departmentsRepository.getDepartmentByName(endpoint.name)
-        respondDepartment(department)
+    get<DepartmentEndpoint> {
+        when (val departmentParam = call.parameters["department"]) {
+            null -> call.respond(departmentsRepository.getDepartments())
+            else -> {
+                val department = departmentsRepository.getDepartment(departmentParam)
+                respondDepartment(department)
+            }
+        }
     }
 }
 
