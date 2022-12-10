@@ -36,9 +36,13 @@ fun String.getLessonAndTeachers(): Pair<String, String> {
     val lesson = if (isComplex) {
         this
     } else {
-        lessonRegex.find(this)?.value ?: "Invalid"
+        lessonRegex.find(this)?.value ?: this
     }
-    val teachers = teacherRegex.findAll(this).joinToString(", ") { it.value }
+    val teachers = if (lesson.isNotBlank()) {
+        teacherRegex.findAll(this).joinToString(", ") { it.value }
+    } else {
+        ""
+    }
     return lesson.trim() to teachers.trim()
 }
 
