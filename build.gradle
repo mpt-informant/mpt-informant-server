@@ -7,7 +7,7 @@ plugins {
 }
 
 group "me.kofesst.ktor.mptinformant"
-version "1.1-alpha01"
+version "1.1"
 
 def applicationClassName = "me.kofesst.ktor.mptinformant.ApplicationKt"
 mainClassName = applicationClassName
