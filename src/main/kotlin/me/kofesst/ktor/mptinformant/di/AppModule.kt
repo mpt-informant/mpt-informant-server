@@ -26,12 +26,13 @@ val appModule = module {
         val departmentsRepository by inject<DepartmentsRepository>()
         GroupsRepositoryImpl(departmentsRepository)
     }
-    single<ScheduleRepository> {
-        val groupsRepository by inject<GroupsRepository>()
-        ScheduleRepositoryImpl(groupsRepository)
-    }
     single<ChangesRepository> {
         val groupsRepository by inject<GroupsRepository>()
         ChangesRepositoryImpl(groupsRepository)
+    }
+    single<ScheduleRepository> {
+        val groupsRepository by inject<GroupsRepository>()
+        val changesRepository by inject<ChangesRepository>()
+        ScheduleRepositoryImpl(groupsRepository, changesRepository)
     }
 }

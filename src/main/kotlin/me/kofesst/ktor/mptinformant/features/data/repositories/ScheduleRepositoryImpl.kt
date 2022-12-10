@@ -1,17 +1,20 @@
 package me.kofesst.ktor.mptinformant.features.data.repositories
 
+import me.kofesst.ktor.mptinformant.features.data.utils.mergeWithChanges
 import me.kofesst.ktor.mptinformant.features.data.utils.parseDocument
 import me.kofesst.ktor.mptinformant.features.domain.models.DayOfWeek
 import me.kofesst.ktor.mptinformant.features.domain.models.WeekLabel
 import me.kofesst.ktor.mptinformant.features.domain.models.schedule.GroupSchedule
 import me.kofesst.ktor.mptinformant.features.domain.models.schedule.GroupScheduleDay
 import me.kofesst.ktor.mptinformant.features.domain.models.schedule.GroupScheduleRow
+import me.kofesst.ktor.mptinformant.features.domain.repositories.ChangesRepository
 import me.kofesst.ktor.mptinformant.features.domain.repositories.GroupsRepository
 import me.kofesst.ktor.mptinformant.features.domain.repositories.ScheduleRepository
 import org.jsoup.nodes.Element
 
 class ScheduleRepositoryImpl(
     private val groupsRepository: GroupsRepository,
+    private val changesRepository: ChangesRepository,
 ) : ScheduleRepository {
     companion object {
         private const val ROOT_URL = "https://mpt.ru/studentu/raspisanie-zanyatiy/"
@@ -25,24 +28,35 @@ class ScheduleRepositoryImpl(
         WeekLabel.byDisplayName(weekLabelElement.text())
     }
 
-    override suspend fun getScheduleByGroupId(groupId: String): GroupSchedule? = parseDocument(
+    override suspend fun getGroupSchedule(
+        groupIdOrName: String,
+        useMergingWithChanges: Boolean,
+    ): GroupSchedule? = parseDocument(
         url = ROOT_URL
     ) {
-        val tabPanelElement = select("div.tab-pane#$groupId").first()
+        val group = groupsRepository.getGroup(groupIdOrName)
+            ?: throw Exception("Group not found")
+        val tabPanelElement = select("div.tab-pane#${group.id}").first()
             ?: throw Exception("Schedule tab panel not found")
         val tableElements = tabPanelElement.select("table.table")
         val scheduleDays = tableElements.map(this@ScheduleRepositoryImpl::parseScheduleDay)
 
         GroupSchedule(
             weekLabel = getWeekLabel() ?: WeekLabel.None,
-            groupId = groupId,
+            groupId = group.id,
             days = scheduleDays
-        )
-    }
-
-    override suspend fun getScheduleByGroupName(groupName: String): GroupSchedule? {
-        val group = groupsRepository.getGroupByName(groupName) ?: return null
-        return getScheduleByGroupId(group.id)
+        ).run {
+            if (useMergingWithChanges) {
+                val changes = changesRepository.getGroupChanges(groupIdOrName)
+                if (changes != null) {
+                    mergeWithChanges(changes)
+                } else {
+                    this
+                }
+            } else {
+                this
+            }
+        }
     }
 
     private fun parseScheduleDay(tableElement: Element): GroupScheduleDay {

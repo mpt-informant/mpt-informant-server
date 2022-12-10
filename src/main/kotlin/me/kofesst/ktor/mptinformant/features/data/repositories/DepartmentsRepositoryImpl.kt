@@ -63,13 +63,8 @@ class DepartmentsRepositoryImpl : DepartmentsRepository {
         )
     }
 
-    override suspend fun getDepartmentById(id: String): Department? =
+    override suspend fun getDepartment(idOrName: String): Department? =
         getDepartments().firstOrNull { department ->
-            department.id == id
-        }
-
-    override suspend fun getDepartmentByName(name: String): Department? =
-        getDepartments().firstOrNull { department ->
-            department.name.lowercase() == name.lowercase()
+            department.id == idOrName || department.name.contains(idOrName, ignoreCase = true)
         }
 }

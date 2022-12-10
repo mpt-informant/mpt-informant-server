@@ -10,26 +10,15 @@ import me.kofesst.ktor.mptinformant.features.domain.models.changes.GroupChanges
 import me.kofesst.ktor.mptinformant.features.domain.repositories.ChangesRepository
 import org.koin.ktor.ext.inject
 
-@Suppress("unused") // Nested location class with outer location class parameter
 @OptIn(KtorExperimentalLocationsAPI::class)
-@Location("api/changes")
-class ChangesEndpoint {
-    @Location("/byId/{groupId}")
-    data class ById(val parent: ChangesEndpoint, val groupId: String)
-
-    @Location("/byName/{groupName}")
-    data class ByName(val parent: ChangesEndpoint, val groupName: String)
-}
+@Location("api/changes/{idOrName}")
+data class ChangesEndpoint(val idOrName: String)
 
 @OptIn(KtorExperimentalLocationsAPI::class)
 fun Route.changesEndpoints() {
     val changesRepository by inject<ChangesRepository>()
-    get<ChangesEndpoint.ById> { endpoint ->
-        val changes = changesRepository.getChangesByGroupId(endpoint.groupId)
-        respondSchedule(changes)
-    }
-    get<ChangesEndpoint.ByName> { endpoint ->
-        val changes = changesRepository.getChangesByGroupName(endpoint.groupName)
+    get<ChangesEndpoint> { endpoint ->
+        val changes = changesRepository.getGroupChanges(endpoint.idOrName)
         respondSchedule(changes)
     }
 }

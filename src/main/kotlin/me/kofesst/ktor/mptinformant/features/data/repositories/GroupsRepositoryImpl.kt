@@ -12,19 +12,8 @@ class GroupsRepositoryImpl(
             department.groups
         }.flatten()
 
-    override suspend fun getGroupById(id: String): Group? =
+    override suspend fun getGroup(idOrName: String): Group? =
         getGroups().firstOrNull { group ->
-            group.id == id
-        }
-
-    override suspend fun getGroupByName(name: String): Group? =
-        getGroups().firstOrNull { group ->
-            with(group.name.lowercase().split(", ")) {
-                when (size) {
-                    0 -> false
-                    1 -> group.name.lowercase() == name.lowercase()
-                    else -> any { it == name.lowercase() }
-                }
-            }
+            group.id == idOrName || group.name.contains(idOrName, ignoreCase = true)
         }
 }

@@ -5,6 +5,5 @@ import me.kofesst.ktor.mptinformant.features.domain.models.schedule.GroupSchedul
 
 interface ScheduleRepository {
     suspend fun getWeekLabel(): WeekLabel?
-    suspend fun getScheduleByGroupId(groupId: String): GroupSchedule?
-    suspend fun getScheduleByGroupName(groupName: String): GroupSchedule?
+    suspend fun getGroupSchedule(groupIdOrName: String, useMergingWithChanges: Boolean = false): GroupSchedule?
 }
